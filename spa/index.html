@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='UTF-8'>
+    <title>Mini SPA</title>
+    <link rel='stylesheet' href='../css/estilo.css'>
+    <style>
+        nav {
+            font-size: 2em;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #FFF;
+            padding: 0 10px;
+        }
+    </style>
+</head>
+
+<body class="conteudo">
+    <nav>
+        <a href wm-link="series.html" wm-destino=".pagina">Séries</a> |
+        <a href wm-link="linguagens.html" wm-destino=".pagina">Linguagens</a>
+    </nav>
+    
+    <div class="pagina"></div>
+    <script>
+        // url seria series.html o seletor seria .pagina"
+        function navegarViaAjax(url, seletor, push = true) {
+            if(!url || !seletor) return // validando a navegação se tem seletor
+            const elemento = document.querySelector(seletor) //recebendo o seletor
+            fetch(url)                  
+                .then(resp => resp.text()) // pegando o texto do html
+                .then(html => {             
+                    elemento.innerHTML = html  
+                    if(push) {
+                        history.pushState({ seletor }, "Página Ajax", url) // colocando historico no brouse
+                    }
+                })
+        }
+
+        document.querySelectorAll('[wm-link]').forEach(link => { // pegando todo os elemento
+            const url = link.attributes['wm-link'].value
+            const seletorDestino = link.attributes['wm-destino'].value
+
+            link.onclick = e => {       // intercepetando o vento de click
+                e.preventDefault()
+                navegarViaAjax(url, seletorDestino)
+            }
+        })
+
+        window.onpopstate = e => { // tirando o historico da pilha
+            if(e.state) {
+                navegarViaAjax(window.location.href, e.state.seletor, false)
+            }
+        }
+    </script>
+</body>

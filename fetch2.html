@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='UTF-8'>
+    <title>Fetch API #02</title>
+    <link rel='stylesheet' href='css/estilo.css'>
+    <style>
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        form input,
+        form select,
+        form button {
+            margin: 10px;
+            font-size: 1.6em;
+        }
+    </style>
+</head>
+
+<body class="conteudo exercicio">
+    <h1>Formulário Via Fetch</h1>
+    <form name="usuarioForm" action="formulario" method="post">
+        <input type="text" name="nome" placeholder="Nome..." />
+        <input type="text" name="sobrenome" placeholder="Sobrenome..." />
+        <button>Salvar</button>
+    </form>
+    <div id="resultado"></div>
+
+    <script>
+        // pega o usuarioForm
+        document.usuarioForm.onsubmit = async e => {
+            e.preventDefault()
+
+            const form = e.target    // pega o elemento que disparou o evento
+            const data = new FormData(form)  // pega todos os dados do formulario e joga nesse objeto
+            data.append('ajax', true)       // so um exempl oque consegui adicionar dados no formulario
+
+            const options = {
+                method: form.method,            // method do formulario
+                body: new URLSearchParams(data)  // data variavel criado - estou passando os dados do fomulario
+            }
+
+            //const resultado = document.getElementById('resultado')
+            // fetch(form.action, options)
+            //     .then(resp => resp.json())  // pegando a resposta
+            //     .then(json => {
+            //         resultado.innerHTML = JSON.stringify(json) 
+            //     })
+            //     .catch(e => {
+            //         resultado.innerHTML = e
+            //     })
+            
+             // fazer a mesma coisa mais usando o await
+            const resultado = document.getElementById('resultado')
+            try {
+                const resp = await fetch(form.action, options) // resolve e retorna a resposta
+                const json = await resp.json()
+                resultado.innerHTML = JSON.stringify(json)
+            } catch (e) {
+                resultado.innerHTML = e
+            }
+        }
+    </script>
+</body>

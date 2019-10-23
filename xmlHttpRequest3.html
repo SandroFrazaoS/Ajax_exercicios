@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='UTF-8'>
+    <title>XMLHttpRequest #03</title>
+    <link rel='stylesheet' href='css/estilo.css'>
+</head>
+
+<body class="conteudo exercicio">
+    <h1>Estados</h1>
+
+    <script>
+        function ajax(config) {
+            const xhr = new XMLHttpRequest()
+            xhr.open(config.metodo, config.url, true)
+
+            // usando outro evento   https://www.w3schools.com/js/js_ajax_http.asp 
+            xhr.onreadystatechange = e => {
+                // igual a 4 foi concluido
+                if (xhr.readyState === 4) {  // status da requisição conforme comando, verificar no site
+                    if (xhr.status === 200) {
+                        config.sucesso(xhr.responseXML) // resposta de um xml
+                    } else if (xhr.status >= 400) {
+                        config.erro({
+                            codigo: xhr.status,
+                            texto: xhr.statusText
+                        })
+                    }
+                }
+            }
+
+            xhr.send()
+        }
+
+        ajax({
+            url: "dados/estados.xml",
+            metodo: "get",
+            sucesso(resposta) {
+                console.log(resposta) // para ver o documento no console
+                // é uma lista de estatu
+                const estados = resposta.getElementsByTagName('estado') // recebi todos os status
+                //estou percorrendo o lista, a lista é uma tag
+
+                //htm é um acumulador, reduce transforma em um unico elemento
+                const itens = Array.from(estados).reduce( // convertando o arry, estpu pegando o nome da lista
+                    (html, estado) => html + `<li>${estado.attributes.nome.value}</li>`, ''
+                )
+                document.body.insertAdjacentHTML('beforeend', `<ul>${itens}</ul>`) // incluido a lista dentro e uma ul
+            },
+            erro(e) {
+                const msg = document.createTextNode(`${e.codigo}: ${e.texto}`)
+                document.body.appendChild(msg)
+            }
+        })
+    </script>
+</body>
